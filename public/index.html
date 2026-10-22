@@ -181,6 +181,11 @@
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ userId: idGame, zoneId: server })
       });
+      
+      if (!response.ok) {
+        throw new Error(`Request gagal: ${response.status} ${response.statusText}`);
+      }
+
       const result = await response.json();
 
       if (result.success) {
