@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CECEL TOP UP GAMES - Katalog MLBB</title>
+  <style>
+    * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; }
+    body { margin: 0; padding: 16px; background: #0b1120; color: #f8fafc; min-height: 100vh; display: flex; justify-content: center; }
+    .container { width: 100%; max-width: 480px; }
+
+    .banner { background: linear-gradient(135deg, #1e293b, #0f172a); border-radius: 16px; padding: 20px; text-align: center; border: 1px solid #334155; margin-bottom: 16px; }
+    .banner h1 { color: #00e6a0; margin: 0 0 8px 0; font-size: 22px; }
+    .banner p { color: #94a3b8; font-size: 13px; margin: 0; }
+
+    .account-box { background: #1e293b; padding: 16px; border-radius: 16px; border: 1px solid #334155; margin-bottom: 20px; }
+    .account-box label { font-size: 13px; color: #cbd5e1; margin-bottom: 8px; display: block; font-weight: 600; }
+    .input-group { display: flex; gap: 10px; }
+    .input-group input { flex: 1; padding: 12px; background: #0f172a; border: 1px solid #334155; border-radius: 8px; color: white; font-size: 14px; outline: none; }
+    .input-group input:focus { border-color: #00e6a0; }
+
+    .btn-cek { width: 100%; margin-top: 10px; padding: 10px; border: none; border-radius: 8px; background: #334155; color: white; font-weight: bold; cursor: pointer; transition: 0.2s; }
+    .btn-cek:hover { background: #475569; }
+    .btn-cek:disabled { opacity: 0.6; cursor: wait; }
+
+    .account-info { display: none; margin-top: 12px; padding: 10px; background: rgba(0, 230, 160, 0.1); border: 1px solid #00e6a0; border-radius: 8px; text-align: center; font-size: 14px; }
+    .account-info span { color: #00e6a0; font-weight: bold; display: block; font-size: 16px; }
+
+    .section-title { display: flex; align-items: center; gap: 8px; font-size: 15px; font-weight: bold; color: #e2e8f0; margin: 24px 0 12px 0; padding-left: 8px; border-left: 4px solid #facc15; }
+
+    .grid-container { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; pointer-events: none; opacity: 0.4; transition: 0.3s; }
+    .grid-container.unlocked { pointer-events: auto; opacity: 1; }
+
+    .item-card { background: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 12px; cursor: pointer; transition: all 0.2s; }
+    .item-card:hover { border-color: #475569; }
+    .item-card.active { border-color: #00e6a0; background: rgba(0, 230, 160, 0.05); box-shadow: 0 0 10px rgba(0, 230, 160, 0.2); }
+    .item-header { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+    .item-icon { width: 28px; height: 28px; background-color: #3b82f6; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; }
+    .item-name { font-size: 13px; font-weight: 600; color: #cbd5e1; line-height: 1.2; }
+    .item-price { font-size: 14px; font-weight: bold; color: #00e6a0; }
+
+    .payment-box { background: #1e293b; border-radius: 16px; padding: 16px; border: 1px solid #334155; margin-top: 24px; }
+    .payment-title { font-size: 14px; font-weight: bold; color: #f8fafc; margin-bottom: 12px; }
+    .payment-list { display: flex; flex-direction: column; gap: 8px; }
+    .payment-item { display: flex; justify-content: space-between; align-items: center; padding: 12px; border: 1px solid #334155; border-radius: 8px; cursor: pointer; font-size: 13px; color: #cbd5e1; }
+    .payment-item.active { border-color: #00e6a0; background: rgba(0, 230, 160, 0.05); }
+    .payment-item .check { width: 16px; height: 16px; border-radius: 50%; border: 2px solid #475569; }
+    .payment-item.active .check { border-color: #00e6a0; background: #00e6a0; }
+
+    .sticky-footer { position: fixed; bottom: 0; left: 0; width: 100%; background: #0f172a; border-top: 1px solid #334155; padding: 16px; z-index: 10; display: flex; justify-content: center; }
+    .footer-content { width: 100%; max-width: 480px; display: flex; align-items: center; gap: 16px; }
+    .total-info { flex: 1; }
+    .total-label { font-size: 11px; color: #94a3b8; }
+    .total-price { font-size: 18px; font-weight: bold; color: #00e6a0; }
+    .btn-order { background: #00c98b; color: #0f172a; border: none; padding: 14px 24px; border-radius: 10px; font-size: 15px; font-weight: bold; cursor: pointer; transition: 0.2s; }
+    .btn-order:hover { background: #00e6a0; }
+    .btn-order:disabled { background: #334155; color: #64748b; cursor: not-allowed; }
+
+    .spacer { height: 100px; }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="banner">
+    <h1>CECEL TOP UP GAMES</h1>
+    <p>Mobile Legends: Bang Bang</p>
+  </div>
+
+  <div class="account-box">
+    <label>Masukkan Data Akun</label>
+    <div class="input-group">
+      <input type="number" id="idgame" placeholder="User ID" required>
+      <input type="number" id="server" placeholder="Zone ID" required>
+    </div>
+    <button class="btn-cek" id="btn-cek" onclick="cekAkun()">🔍 Cek ID Akun</button>
+    <div class="account-info" id="account-info">
+      Nickname: <span id="nickname"></span>
+    </div>
+  </div>
+
+  <div class="section-title">🔥 Paket Spesial</div>
+  <div class="grid-container" id="grid-spesial"></div>
+
+  <div class="section-title">💎 Top Up Diamond</div>
+  <div class="grid-container" id="grid-diamond"></div>
+
+  <div class="payment-box" id="payment-box">
+    <div class="payment-title">Pilih Metode Pembayaran</div>
+    <div class="payment-list" id="payment-list">
+      <div class="payment-item" data-value="QRIS">QRIS (Semua E-Wallet) <div class="check"></div></div>
+      <div class="payment-item" data-value="DANA">DANA <div class="check"></div></div>
+      <div class="payment-item" data-value="GoPay">GoPay <div class="check"></div></div>
+      <div class="payment-item" data-value="ShopeePay">ShopeePay <div class="check"></div></div>
+      <div class="payment-item" data-value="Transfer Bank BCA/BRI/Mandiri">Transfer Bank <div class="check"></div></div>
+    </div>
+  </div>
+
+  <div class="spacer"></div>
+</div>
+
+<div class="sticky-footer">
+  <div class="footer-content">
+    <div class="total-info">
+      <div class="total-label">Total Pembayaran</div>
+      <div class="total-price" id="display-price">Rp 0</div>
+    </div>
+    <button class="btn-order" id="btn-order" onclick="submitOrder()" disabled>Order</button>
+  </div>
+</div>
+
+<script>
+  const NOMOR_WHATSAPP = "6285726240720";
+  const API_URL = "/api/check-id";
+
+  let isAccountValid = false;
+  let selectedProduk = null;
+  let selectedMetode = null;
+  let accountData = null;
+
+  const dataSpesial = [
+    { name: "Weekly Diamond Pass", price: 33500 }, { name: "Elite Bundle", price: 19204 },
+    { name: "Super Value Pass", price: 19451 }, { name: "Monthly Epic Bundle", price: 83569 },
+    { name: "Starlight Member", price: 92363 }, { name: "Twilight Pass", price: 168341 },
+    { name: "Starlight Member Pass", price: 223790 }
+  ];
+
+  const dataDiamond = [
+    { name: "10 Diamonds", price: 6420 }, { name: "15 Diamonds", price: 8500 },
+    { name: "17 Diamonds", price: 9000 }, { name: "19 Diamonds", price: 10000 },
+    { name: "20 Diamonds", price: 13500 }, { name: "30 Diamonds", price: 13248 },
+    { name: "33 Diamonds", price: 14208 }, { name: "36 Diamonds", price: 16000 },
+    { name: "42 Diamonds", price: 17609 }, { name: "44 Diamonds", price: 17600 },
+    { name: "45 Diamonds", price: 18166 }, { name: "46 Diamonds", price: 18587 },
+    { name: "50 Diamonds", price: 19857 }, { name: "56 Diamonds", price: 21776 },
+    { name: "59 Diamonds", price: 22568 }, { name: "64 Diamonds", price: 24308 },
+    { name: "66 Diamonds", price: 25195 }, { name: "67 Diamonds", price: 26034 },
+    { name: "71 Diamonds", price: 26650 }, { name: "74 Diamonds", price: 27723 },
+    { name: "78 Diamonds", price: 29407 }, { name: "80 Diamonds", price: 29888 },
+    { name: "83 Diamonds", price: 31764 }, { name: "85 Diamonds", price: 32502 },
+    { name: "88 Diamonds", price: 32604 }, { name: "92 Diamonds", price: 33693 },
+    { name: "98 Diamonds", price: 35680 }, { name: "100 Diamonds", price: 36663 },
+    { name: "112 Diamonds", price: 37302 }, { name: "113 Diamonds", price: 37467 },
+    { name: "116 Diamonds", price: 38467 }, { name: "128 Diamonds", price: 41916 },
+    { name: "129 Diamonds", price: 42515 }, { name: "148 Diamonds", price: 48150 },
+    { name: "172 Diamonds", price: 55353 }, { name: "176 Diamonds", price: 56686 },
+    { name: "257 Diamonds", price: 81179 }, { name: "277 Diamonds", price: 87315 },
+    { name: "284 Diamonds", price: 89340 }, { name: "296 Diamonds", price: 89996 },
+    { name: "300 Diamonds", price: 91662 }, { name: "305 Diamonds", price: 93231 },
+    { name: "344 Diamonds", price: 105099 }, { name: "370 Diamonds", price: 112679 },
+    { name: "384 Diamonds", price: 116991 }, { name: "406 Diamonds", price: 123809 },
+    { name: "408 Diamonds", price: 124427 }, { name: "429 Diamonds", price: 130564 },
+    { name: "514 Diamonds", price: 157295 }, { name: "518 Diamonds", price: 159757 },
+    { name: "568 Diamonds", price: 172954 }, { name: "600 Diamonds", price: 183269 },
+    { name: "659 Diamonds", price: 198048 }, { name: "702 Diamonds", price: 211080 },
+    { name: "706 Diamonds", price: 212370 }, { name: "716 Diamonds", price: 215370 },
+    { name: "750 Diamonds", price: 225470 }, { name: "790 Diamonds", price: 237751 },
+    { name: "874 Diamonds", price: 261739 }, { name: "875 Diamonds", price: 262476 },
+    { name: "878 Diamonds", price: 263329 }, { name: "963 Diamonds", price: 287727 },
+    { name: "966 Diamonds", price: 290538 }, { name: "1045 Diamonds", price: 313456 }
+  ];
+
+  async function cekAkun() {
+    const idGame = document.getElementById('idgame').value.trim();
+    const server = document.getElementById('server').value.trim();
+    const btn = document.getElementById('btn-cek');
+    const infoBox = document.getElementById('account-info');
+
+    if (!idGame || !server) {
+      alert("Mohon isi User ID dan Zone ID terlebih dahulu.");
+      return;
+    }
+
+    btn.innerText = "⏳ Mencari...";
+    btn.disabled = true;
+    infoBox.style.display = "none";
+
+    try {
+      const response = await fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId: idGame, zoneId: server })
+      });
+      const result = await response.json();
+
+      if (result.success) {
+        isAccountValid = true;
+        accountData = result.data;
+        document.getElementById('nickname').innerText = `${accountData.nickname} (${accountData.country})`;
+        infoBox.style.display = "block";
+        document.getElementById('grid-spesial').classList.add('unlocked');
+        document.getElementById('grid-diamond').classList.add('unlocked');
+      } else {
+        throw new Error(result.message || "Gagal cek ID");
+      }
+    } catch (err) {
+      alert("❌ " + err.message);
+      isAccountValid = false;
+      document.getElementById('grid-spesial').classList.remove('unlocked');
+      document.getElementById('grid-diamond').classList.remove('unlocked');
+      resetSelection();
+    } finally {
+      btn.innerText = "🔍 Cek ID Akun";
+      btn.disabled = false;
+    }
+  }
+
+  function resetSelection() {
+    document.querySelectorAll('.item-card').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.payment-item').forEach(el => el.classList.remove('active'));
+    selectedProduk = null;
+    selectedMetode = null;
+    updateTotal();
+  }
+
+  function renderCatalog(data, containerId) {
+    const container = document.getElementById(containerId);
+    data.forEach(item => {
+      const div = document.createElement('div');
+      div.className = 'item-card';
+      div.innerHTML = `
+        <div class="item-header">
+          <div class="item-icon">💎</div>
+          <div class="item-name">${item.name}</div>
+        </div>
+        <div class="item-price">Rp ${item.price.toLocaleString('id-ID')}</div>
+      `;
+      div.onclick = () => selectProduct(div, item);
+      container.appendChild(div);
+    });
+  }
+
+  function selectProduct(element, item) {
+    if (!isAccountValid) {
+      alert("Silakan cek ID akun terlebih dahulu.");
+      return;
+    }
+    document.querySelectorAll('.item-card').forEach(el => el.classList.remove('active'));
+    element.classList.add('active');
+    selectedProduk = item;
+    updateTotal();
+    document.getElementById('payment-box').scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  document.querySelectorAll('.payment-item').forEach(el => {
+    el.onclick = () => {
+      if (!isAccountValid) {
+        alert("Silakan cek ID akun terlebih dahulu.");
+        return;
+      }
+      document.querySelectorAll('.payment-item').forEach(i => i.classList.remove('active'));
+      el.classList.add('active');
+      selectedMetode = el.getAttribute('data-value');
+      checkOrderButton();
+    };
+  });
+
+  function updateTotal() {
+    const priceDisplay = document.getElementById('display-price');
+    if (selectedProduk) {
+      priceDisplay.innerText = `Rp ${selectedProduk.price.toLocaleString('id-ID')}`;
+    } else {
+      priceDisplay.innerText = "Rp 0";
+    }
+    checkOrderButton();
+  }
+
+  function checkOrderButton() {
+    document.getElementById('btn-order').disabled = !(isAccountValid && selectedProduk && selectedMetode);
+  }
+
+  function submitOrder() {
+    if (!isAccountValid || !selectedProduk || !selectedMetode) return;
+    const idGame = document.getElementById('idgame').value.trim();
+    const server = document.getElementById('server').value.trim();
+    const pesan =
+      "Halo Admin CECEL TOP UP, saya ingin order top up MLBB:\n\n" +
+      `🎮 Nickname: ${accountData.nickname}\n` +
+      `🆔 User ID : ${idGame} (${server})\n` +
+      `💎 Paket   : ${selectedProduk.name}\n` +
+      `💰 Harga   : Rp ${selectedProduk.price.toLocaleString('id-ID')}\n` +
+      `💳 Bayar   : ${selectedMetode}\n\n` +
+      "Mohon info nomor rekening/QRIS untuk pembayarannya. Terima kasih! 🙏";
+    const urlWA = `https://wa.me/${NOMOR_WHATSAPP}?text=${encodeURIComponent(pesan)}`;
+    window.open(urlWA, "_blank");
+  }
+
+  renderCatalog(dataSpesial, 'grid-spesial');
+  renderCatalog(dataDiamond, 'grid-diamond');
+</script>
+
+</body>
+</html>
